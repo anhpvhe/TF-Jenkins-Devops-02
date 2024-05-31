@@ -32,26 +32,33 @@ pipeline {
 
         stage('Apply') {
             steps {
-                script {
-                    def userInput = input(
-                        id: 'userInput',
-                        message: 'Do you want to perform these actions?',
-                        parameters: [choice(choices: ['Yes', 'No'], description: 'Choose option', name: 'CHOICE')]
-                    )
-                    if (userInput == 'Yes') {
-                        withCredentials([
-                            string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
-                            string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')
-                        ]) {
+                withCredentials([
+                    string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+                    script {
+                        def planOutput = bat(script: "cd website-app && ${env.TERRAFORM_PATH} plan", returnStdout: true).trim()
+                        echo "Terraform Plan:"
+                        echo "${planOutput}"
+                    }
+
+                    script {
+                        def userInput = input(
+                            id: 'userInput',
+                            message: 'Do you want to apply?',
+                            parameters: [choice(choices: ['Yes', 'No'], description: 'Choose option')]
+                        )
+                        if (userInput == 'Yes') {
                             bat "cd website-app && echo 'yes' | ${env.TERRAFORM_PATH} apply"
+                        } else {
+                            echo 'Aborting the apply stage.'
+                            currentBuild.result = 'ABORTED'
+                            error('Aborted by user')
                         }
-                    } else {
-                        echo 'Aborting the apply stage.'
-                        currentBuild.result = 'ABORTED'
-                        error('Aborted by user')
                     }
                 }
             }
         }
+        
     }
 }
