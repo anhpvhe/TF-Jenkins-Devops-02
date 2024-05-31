@@ -53,5 +53,18 @@ pipeline {
                 }
             }
         }
+        stage('Stop') {
+            steps {
+                input message: 'Do you want to destroy the infrastructure?', ok: 'Destroy'
+            }
+        }
+    }
+    
+    post {
+        always {
+            script {
+                bat "cd terraform && ${env.TERRAFORM_PATH} destroy -auto-approve"
+            }
+        }
     }
 }
