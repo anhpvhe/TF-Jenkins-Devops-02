@@ -36,7 +36,7 @@ pipeline {
                     def userInput = input(
                         id: 'userInput',
                         message: 'Do you want to apply?',
-                        parameters: [choice(choices: ['Yes', 'No'], description: 'Choose option')]
+                        parameters: [choice(choices: ['Yes', 'No'], description: 'Choose option', name: 'CHOICE')]
                     )
                     if (userInput == 'Yes') {
                         withCredentials([
