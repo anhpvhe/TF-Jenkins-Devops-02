@@ -119,57 +119,14 @@ resource "aws_subnet" "private_data_subnet_az2" {
   }
 }
 
-module "nat_gateway" {
-  source                     = "../nat-gateway"
-  vpc_id                     = aws_vpc.vpc.id
-  internet_gateway           = aws_internet_gateway.internet_gateway
-  public_subnet_az1_id       = aws_subnet.public_subnet_az1.id
-  public_subnet_az2_id       = aws_subnet.public_subnet_az2.id
-  private_app_subnet_az1_id  = aws_subnet.private_app_subnet_az1.id
-  private_app_subnet_az2_id  = aws_subnet.private_app_subnet_az2.id
-  private_data_subnet_az1_id = aws_subnet.private_data_subnet_az1.id
-  private_data_subnet_az2_id = aws_subnet.private_data_subnet_az2.id
-}
-
-
-# resource "aws_route_table" "private_route_table" {
-#   vpc_id = aws_vpc.vpc.id
-
-#   route {
-#     cidr_block     = "0.0.0.0/0"
-#     nat_gateway_id = module.nat_gateway.nat_gateway_az1_id
-#   }
-#   route {
-#     cidr_block     = "0.0.0.0/0"
-#     nat_gateway_id = module.nat_gateway.nat_gateway_az2_id
-#   }
-
-#   tags = {
-#     Name = "private_route_table"
-#   }
-# }
-
-
-# # associate private app subnet az1 with private route table az1
-# resource "aws_route_table_association" "private_app_subnet_az1_route_table_association" {
-#   subnet_id      = aws_subnet.private_app_subnet_az1.id
-#   route_table_id = aws_route_table.private_route_table.id
-# }
-
-# # associate private data subnet az1 with private route table az1
-# resource "aws_route_table_association" "private_data_subnet_az1_route_table_association" {
-#   subnet_id      = aws_subnet.private_data_subnet_az1.id
-#   route_table_id = aws_route_table.private_route_table.id
-# }
-
-# # associate private app subnet az2 with private route table az2
-# resource "aws_route_table_association" "private_app_subnet_az2_route_table_association" {
-#   subnet_id      = aws_subnet.private_app_subnet_az2.id
-#   route_table_id = aws_route_table.private_route_table.id
-# }
-
-# # associate private data subnet az2 with private route table az2
-# resource "aws_route_table_association" "private_data_subnet_az2_route_table_association" {
-#   subnet_id      = aws_subnet.private_data_subnet_az2.id
-#   route_table_id = aws_route_table.private_route_table.id
+# module "nat_gateway" {
+#   source                     = "../nat-gateway"
+#   vpc_id                     = aws_vpc.vpc.id
+#   internet_gateway           = aws_internet_gateway.internet_gateway
+#   public_subnet_az1_id       = aws_subnet.public_subnet_az1.id
+#   public_subnet_az2_id       = aws_subnet.public_subnet_az2.id
+#   private_app_subnet_az1_id  = aws_subnet.private_app_subnet_az1.id
+#   private_app_subnet_az2_id  = aws_subnet.private_app_subnet_az2.id
+#   private_data_subnet_az1_id = aws_subnet.private_data_subnet_az1.id
+#   private_data_subnet_az2_id = aws_subnet.private_data_subnet_az2.id
 # }
