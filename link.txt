@@ -1,0 +1,5 @@
+https://www.youtube.com/watch?v=ZP_vAbjfFMs&t=427s
+
+https://github.com/azeezsalu/terraform-tutorial-reference-files/blob/main/ec2-reference.tf
+
+terraform apply -destroy -auto-approve
