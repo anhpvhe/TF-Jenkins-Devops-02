@@ -32,19 +32,23 @@ pipeline {
 
         stage('Apply') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')
-                ]) {
+                script {
                     def userInput = input(
-                        id: 'confirm', message: 'Do you want to apply the plan?', parameters: [
-                            [$class: 'BooleanParam', description: 'Apply the plan', name: 'apply']
-                        ]
+                        id: 'userInput',
+                        message: 'Do you want to perform these actions?',
+                        parameters: [choice(choices: ['Yes', 'No'], description: 'Choose option', name: 'CHOICE')]
                     )
-                    if (userInput) {
-                        bat "cd website-app && ${env.TERRAFORM_PATH} apply"
+                    if (userInput == 'Yes') {
+                        withCredentials([
+                            string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                            string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')
+                        ]) {
+                            bat "cd website-app && echo 'yes' | ${env.TERRAFORM_PATH} apply"
+                        }
                     } else {
-                        echo "Apply aborted by user."
+                        echo 'Aborting the apply stage.'
+                        currentBuild.result = 'ABORTED'
+                        error('Aborted by user')
                     }
                 }
             }
