@@ -25,6 +25,7 @@ pipeline {
                 ]) {
                     bat "cd website-app && ${env.TERRAFORM_PATH} init"
                     bat "cd website-app && ${env.TERRAFORM_PATH} validate"
+                    bat "cd website-app && ${env.TERRAFORM_PATH} plan"
                 }
             }
         }
@@ -35,11 +36,18 @@ pipeline {
                     string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
                     string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
-                    bat "cd website-app && ${env.TERRAFORM_PATH} apply"
+                    def userInput = input(
+                        id: 'confirm', message: 'Do you want to apply the plan?', parameters: [
+                            [$class: 'BooleanParam', description: 'Apply the plan', name: 'apply']
+                        ]
+                    )
+                    if (userInput) {
+                        bat "cd website-app && ${env.TERRAFORM_PATH} apply"
+                    } else {
+                        echo "Apply aborted by user."
+                    }
                 }
             }
         }
-
-
     }
 }
